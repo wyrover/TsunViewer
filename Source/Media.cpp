@@ -15,19 +15,25 @@ Media::Media(const rapidjson::Value::ConstValueIterator& iter)
 		{
 			std::string label = (*thumbIter)["label"].GetString();
 			if (label == "preview") {
-				RestClient::response imageReq = RestClient::get(
-					(*thumbIter)["image"].GetString()
-				);
+				url = (*thumbIter)["image"].GetString();
+				
 				path = (*thumbIter)["url"].GetString();
 				path.erase(0, 11);
 				path = "Images/" + path;
-				if (!fileExists(path)) {
-					writeFile(path, imageReq.body);
-				}
 				
 				width = (*thumbIter)["width"].GetInt();
 				height = (*thumbIter)["height"].GetInt();
 			}
 		}
 	);
+	loaded = fileExists(path);
 }
+
+void Media::load()
+{	
+	if (!loaded) {
+		RestClient::response imageReq = RestClient::get(url);
+		writeFile(path, imageReq.body);
+	}
+	loaded = true;
+} 

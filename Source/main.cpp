@@ -45,6 +45,7 @@ int main()
 			[&](Media& medium)
 			{
 				std::cout << '\t' << medium.getPath() << std::endl;
+				medium.load();
 				render(
 					post.getTitle(), 
 					medium.getWidth(),
