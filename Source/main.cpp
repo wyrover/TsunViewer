@@ -1,4 +1,6 @@
 #include "common.hpp"
+#include "Media.hpp"
+#include "Post.hpp"
 #include "render.hpp"
 
 #include <restclient-cpp/restclient.h>
@@ -7,6 +9,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 std::string readConfig()
 {
@@ -18,21 +21,6 @@ std::string readConfig()
 	return "http://" + server + "/api/query/?search=" + query;	
 }
 
-std::string saveImage(rapidjson::Document& doc)
-{
-	RestClient::response imageReq = RestClient::get(
-		doc[0u]["media"][0u]["image"]["image"].GetString()
-	);
-	std::string path = doc[0u]["media"][0u]["image"]["url"].GetString();
-	path.erase(0, 11);
-	path = "Images/" + path;
-	if (!fileExists(path)) {
-		writeFile(path, imageReq.body);
-	}
-	
-	return path;
-}
-
 int main()
 {
 	std::string url = readConfig();
@@ -42,14 +30,30 @@ int main()
 	rapidjson::Document doc;
 	doc.Parse(queryReq.body.c_str());
 	
-	std::string path = saveImage(doc);
-		
-	render(
-		doc[0u]["title"].GetString(), 
-		doc[0u]["media"][0u]["width"].GetInt(),
-		doc[0u]["media"][0u]["height"].GetInt(),
-		path
+	std::vector<Post> posts;
+	
+	iterateJSONArray(doc, 
+		[&](const rapidjson::Value::ConstValueIterator& iter)
+		{
+			posts.push_back(Post(iter));
+		}
 	);
+	
+	for (auto& post : posts) {
+		std::cout << post.getTitle() << std::endl;
+		post.iterateMedia(
+			[&](Media& medium)
+			{
+				std::cout << '\t' << medium.getPath() << std::endl;
+				render(
+					post.getTitle(), 
+					medium.getWidth(),
+					medium.getHeight(),
+					medium.getPath()
+				);
+			}
+		);
+	}
 	
 	return 0;
 }
