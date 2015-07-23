@@ -10,7 +10,7 @@ SRCS=$(shell find Source/ -type f -name '*.cpp')
 OBJS=$(SRCS:.cpp=.o)
 
 all: $(OBJS)
-	g++ $(OBJS) -o $(BIN) $(LDLIBS)
+	$(CXX) $(OBJS) -o $(BIN) $(LDLIBS)
 
 clean:
 	rm -f $(OBJS)
