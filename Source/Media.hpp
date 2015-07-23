@@ -15,6 +15,6 @@ public:
 
 private:
 	std::string path;
-	int width;
-	int height;
+	int width = 0;
+	int height = 0;
 };
