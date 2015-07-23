@@ -1,4 +1,4 @@
-BIN=Build/StupidViewer
+BIN=Build/TsunViewer
 
 CXX=clang++
 CXXFLAGS=-std=c++14 -pedantic -Wall -Wextra -IExternals/include
