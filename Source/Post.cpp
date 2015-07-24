@@ -9,10 +9,11 @@ Post::Post(const rapidjson::Value::ConstValueIterator& iter)
 {
 	title = (*iter)["title"].GetString();
 	
-	iterateJSONArray((*iter)["media"], 
+	iterateJsonArray((*iter)["media"], 
 		[&](const rapidjson::Value::ConstValueIterator& iter)
 		{
 			media.push_back(Media(iter));
+			return false;
 		}
 	);
 }

@@ -6,15 +6,16 @@
 
 #include <restclient-cpp/restclient.h>
 
+#include <iostream>
 #include <string>
 
 Media::Media(const rapidjson::Value::ConstValueIterator& iter)
 {
-	iterateJSONArray((*iter)["image"]["thumbnails"], 
+	iterateJsonArray((*iter)["image"]["thumbnails"], 
 		[&](const rapidjson::Value::ConstValueIterator& thumbIter)
 		{
 			std::string label = (*thumbIter)["label"].GetString();
-			if (label == "preview") {
+			if (label == "preview") {				
 				url = (*thumbIter)["image"].GetString();
 				
 				path = (*thumbIter)["url"].GetString();
@@ -22,8 +23,11 @@ Media::Media(const rapidjson::Value::ConstValueIterator& iter)
 				path = "Images/" + path;
 				
 				width = (*thumbIter)["width"].GetInt();
-				height = (*thumbIter)["height"].GetInt();
+				height = (*thumbIter)["height"].GetInt();				
+				
+				return true;
 			}
+			return false;
 		}
 	);
 	loaded = fileExists(path);
@@ -34,6 +38,6 @@ void Media::load()
 	if (!loaded) {
 		RestClient::response imageReq = RestClient::get(url);
 		writeFile(path, imageReq.body);
+		loaded = true;
 	}
-	loaded = true;
 } 
