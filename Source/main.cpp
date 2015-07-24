@@ -33,7 +33,7 @@ int main()
 	std::vector<Post> posts;
 	
 	iterateJsonArray(doc, 
-		[&](const rapidjson::Value::ConstValueIterator& iter)
+		[&](const auto& iter)
 		{
 			posts.push_back(Post(iter));
 			return false;

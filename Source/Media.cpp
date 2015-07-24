@@ -12,7 +12,7 @@
 Media::Media(const rapidjson::Value::ConstValueIterator& iter)
 {
 	iterateJsonArray((*iter)["image"]["thumbnails"], 
-		[&](const rapidjson::Value::ConstValueIterator& thumbIter)
+		[&](const auto& thumbIter)
 		{
 			std::string label = (*thumbIter)["label"].GetString();
 			if (label == "preview") {				
